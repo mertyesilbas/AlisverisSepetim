@@ -45,10 +45,10 @@ public class FirestoreHelper {
                 });
     }
 
-    public void updateItem(ShoppingItem item, boolean isChecked) {
+    public void updateItem(ShoppingItem item) {
         DocumentReference itemRef = db.collection("items").document(item.getId());
         Map<String, Object> updates = new HashMap<>();
-        updates.put("checked", isChecked);
+        updates.put("checked", item.isChecked());
 
         itemRef.update(updates)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

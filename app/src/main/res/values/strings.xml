@@ -3,4 +3,7 @@
     <string name="item_name">Item Name</string>
     <string name="add">Add</string>
     <string name="add_item">Add Item</string>
+    <string name="alacak_ekle">Alacak Ekle</string>
+    <string name="ornegin">Örn. Elma</string>
+    <string name="sil">Sil</string>
 </resources>
