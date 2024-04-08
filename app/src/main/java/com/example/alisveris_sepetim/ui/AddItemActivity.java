@@ -1,4 +1,4 @@
-package com.example.alisveris_sepetim;
+package com.example.alisveris_sepetim.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,10 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.alisveris_sepetim.utils.FirestoreHelper;
+import com.example.alisveris_sepetim.R;
+import com.example.alisveris_sepetim.models.ShoppingItem;
 
 import java.util.UUID;
 

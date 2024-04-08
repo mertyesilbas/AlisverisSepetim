@@ -1,9 +1,10 @@
-package com.example.alisveris_sepetim;
+package com.example.alisveris_sepetim.utils;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.alisveris_sepetim.models.ShoppingItem;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

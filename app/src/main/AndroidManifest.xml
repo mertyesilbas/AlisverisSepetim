@@ -13,11 +13,13 @@
         android:theme="@style/Theme.AlisverisSepetim"
         tools:targetApi="31">
         <activity
-            android:name=".AddItemActivity"
-            android:label="@string/add_item">
-        </activity>
+            android:name=".ui.TakenActivity"
+            android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.AddItemActivity"
+            android:label="@string/add_item"></activity>
+        <activity
+            android:name=".ui.MainActivity"
             android:exported="true" />
     </application>
 

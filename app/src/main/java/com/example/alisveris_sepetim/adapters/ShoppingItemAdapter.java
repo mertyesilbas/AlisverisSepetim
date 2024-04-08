@@ -1,4 +1,4 @@
-package com.example.alisveris_sepetim;
+package com.example.alisveris_sepetim.adapters;
 
 import android.graphics.Paint;
 import android.view.LayoutInflater;
@@ -10,6 +10,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.alisveris_sepetim.R;
+import com.example.alisveris_sepetim.models.ShoppingItem;
+import com.example.alisveris_sepetim.utils.FirestoreHelper;
 
 import java.util.List;
 

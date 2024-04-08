@@ -1,4 +1,4 @@
-package com.example.alisveris_sepetim;
+package com.example.alisveris_sepetim.models;
 
 public class ShoppingItem {
     private String id;

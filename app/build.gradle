@@ -33,6 +33,10 @@ android {
 }
 
 dependencies {
+    def fragment_version = "1.6.2"
+
+    // Java language implementation
+    implementation "androidx.fragment:fragment:$fragment_version"
 
     implementation libs.appcompat
     implementation libs.material
@@ -41,6 +45,7 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+
 
     // Import the Firebase BoM
 

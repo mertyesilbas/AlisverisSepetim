@@ -6,4 +6,8 @@
     <string name="alacak_ekle">Alacak Ekle</string>
     <string name="ornegin">Örn. Elma</string>
     <string name="sil">Sil</string>
+    <string name="taken">Satın Aldıklarım</string>
+    <string name="not_bought">Alınacaklar</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
