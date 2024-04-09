@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- TODO !!! Fix Later -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/not_taken"
+        android:title="@string/not_taken"
+        android:icon="@drawable/ic_not_taken" />
     <item android:id="@+id/taken"
         android:title="@string/taken"
-        android:icon="@drawable/ic_not_bought_items" />
-    <item android:id="@+id/not_taken"
-        android:title="@string/not_bought"
-        android:icon="@drawable/ic_taken_items" />
+        android:icon="@drawable/ic_taken" />
+
 </menu>

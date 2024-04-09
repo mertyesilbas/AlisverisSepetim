@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="item_name">Item Name</string>
-    <string name="add">Add</string>
-    <string name="add_item">Add Item</string>
+    <string name="add">Ekle</string>
+    <string name="add_item">Alacak Ekle</string>
     <string name="alacak_ekle">Alacak Ekle</string>
     <string name="sil">Sil</string>
 </resources>
