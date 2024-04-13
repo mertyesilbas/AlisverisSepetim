@@ -2,125 +2,60 @@ package com.example.alisveris_sepetim.utils;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.alisveris_sepetim.models.ShoppingItem;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
+import com.google.firebase.firestore.SetOptions;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FirestoreHelper {
     private static final String TAG = "FirestoreHelper";
-    private final FirebaseFirestore db;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final CollectionReference shoppingItemsRef = db.collection("shoppingItems");
 
-    public FirestoreHelper() {
-        db = FirebaseFirestore.getInstance();
+    // Create a shopping item
+    public Task<DocumentReference> createShoppingItem(ShoppingItem item) {
+        return shoppingItemsRef.add(item);
     }
 
-    public void addItem(ShoppingItem item, final AddItemCallback callback) {
-        db.collection("items")
-                .add(item)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                        callback.onAddSuccess(documentReference.getId());
+    // Update a shopping item
+    public Task<Void> updateShoppingItem(String id, ShoppingItem item) {
+        return shoppingItemsRef.document(id).set(item, SetOptions.merge());
+    }
+
+    // Delete a shopping item
+    public Task<Void> deleteShoppingItem(String id) {
+        return shoppingItemsRef.document(id).delete();
+    }
+
+    // Get a shopping item by id
+    public Task<DocumentSnapshot> getShoppingItem(String id) {
+        return shoppingItemsRef.document(id).get();
+    }
+
+    public interface OnGetShoppingItemsListener {
+        void onSuccess(List<ShoppingItem> items);
+        void onError(Exception e);
+    }
+
+    public void getShoppingItems(OnGetShoppingItemsListener listener) {
+        shoppingItemsRef.orderBy("createdAt").get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<ShoppingItem> items = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        ShoppingItem item = doc.toObject(ShoppingItem.class);
+                        item.setId(doc.getId());
+                        items.add(item);
+                        Log.d(TAG, "Item: " + item.getName());
                     }
+                    listener.onSuccess(items);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                        callback.onAddFailure(e.getMessage());
-                    }
-                });
+                .addOnFailureListener(listener::onError);
     }
 
-    public void updateItem(ShoppingItem item) {
-        DocumentReference itemRef = db.collection("items").document(item.getId());
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("checked", item.isChecked());
-
-        itemRef.update(updates)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
-    }
-
-    public void deleteItem(ShoppingItem item, final DeleteItemCallback callback) {
-        db.collection("items").document(item.getId()).delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                        callback.onDeleteSuccess(item.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting document", e);
-                        callback.onDeleteFailure(e.getMessage());
-                    }
-                });
-    }
-
-    public void getItems(final GetItemsCallback callback) {
-        db.collection("items")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<ShoppingItem> items = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                ShoppingItem item = document.toObject(ShoppingItem.class);
-                                item.setId(document.getId());
-                                items.add(item);
-                            }
-                            callback.onGetSuccess(items);
-                        } else {
-                            Log.w(TAG, "Error getting documents.", task.getException());
-                            callback.onGetFailure(task.getException().getMessage());
-                        }
-                    }
-                });
-    }
-
-    public interface AddItemCallback {
-        void onAddSuccess(String id);
-
-        void onAddFailure(String message);
-    }
-
-    public interface DeleteItemCallback {
-        void onDeleteSuccess(String id);
-
-        void onDeleteFailure(String message);
-    }
-
-    public interface GetItemsCallback {
-        void onGetSuccess(List<ShoppingItem> items);
-
-        void onGetFailure(String message);
-    }
 }

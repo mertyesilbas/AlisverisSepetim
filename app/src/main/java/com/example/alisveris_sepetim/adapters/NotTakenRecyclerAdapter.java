@@ -1,5 +1,6 @@
 package com.example.alisveris_sepetim.adapters;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,15 +17,22 @@ import com.example.alisveris_sepetim.R;
 import com.example.alisveris_sepetim.models.ShoppingItem;
 import com.example.alisveris_sepetim.utils.FirestoreHelper;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class NotTakenRecyclerAdapter extends RecyclerView.Adapter<NotTakenRecyclerAdapter.ViewHolder> {
     private static final String TAG = "NotTakenRecyclerAdapter";
-    private final List<ShoppingItem> notTakenList;
-    private final FirestoreHelper firestoreHelper = new FirestoreHelper();
+    private List<ShoppingItem> notTakenList;
+    private final FirestoreHelper firestoreHelper; // FirestoreHelper instance
+    private final Context context;
 
-    public NotTakenRecyclerAdapter(List<ShoppingItem> notTakenList) {
-        this.notTakenList = notTakenList;
+    public NotTakenRecyclerAdapter(List<ShoppingItem> notTakenList, FirestoreHelper firestoreHelper, Context context) {
+
+        this.notTakenList = notTakenList;// Filter items by checked state
+        filterItems();
+        this.firestoreHelper = firestoreHelper; // Inject FirestoreHelper
+        this.context = context;
     }
 
     @NonNull
@@ -36,22 +45,31 @@ public class NotTakenRecyclerAdapter extends RecyclerView.Adapter<NotTakenRecycl
     @Override
     public void onBindViewHolder(NotTakenRecyclerAdapter.ViewHolder holder, int position) {
         ShoppingItem shoppingItem = notTakenList.get(position);
+        Log.d(TAG, "Shopping item: " + shoppingItem.getName());
         holder.itemName.setText(shoppingItem.getName());
-        holder.checkBox.setChecked(shoppingItem.isChecked());
-        holder.deleteButton.setOnClickListener(v -> firestoreHelper.deleteItem(shoppingItem,
-                new FirestoreHelper.DeleteItemCallback() {
-                    @Override
-                    public void onDeleteSuccess(String id) {
-                        notTakenList.remove(holder.getAdapterPosition());
-                        notifyItemRemoved(holder.getAdapterPosition());
-                    }
+        holder.checkBox.setChecked(shoppingItem.isChecked()); // Set initial checked state
 
-                    @Override
-                    public void onDeleteFailure(String error) {
-// Handle error
-                        Log.w(TAG, "Error deleting item: " + error);
-                    }
-                }));
+        holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            shoppingItem.setChecked(isChecked);
+            shoppingItem.setUpdatedAt(new Date());
+            firestoreHelper.updateShoppingItem(shoppingItem.getId(), shoppingItem)
+                    .addOnSuccessListener(
+                            v -> {
+                                Log.d(TAG, "Shopping item updated: " + shoppingItem.getName());
+                                filterItems();
+                                notifyDataSetChanged();
+                            }
+                    );
+            Toast.makeText(context , "Alındı olarak işaretlendi.", Toast.LENGTH_SHORT).show();
+        });
+
+        holder.deleteButton.setOnClickListener(v -> {
+            firestoreHelper.deleteShoppingItem(shoppingItem.getId())
+                    .addOnSuccessListener(aVoid -> {
+                        notTakenList.remove(shoppingItem);
+                        notifyDataSetChanged();
+                    });
+        });
     }
 
     @Override
@@ -62,7 +80,6 @@ public class NotTakenRecyclerAdapter extends RecyclerView.Adapter<NotTakenRecycl
             return notTakenList.size();
         }
     }
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public CheckBox checkBox;
@@ -77,4 +94,15 @@ public class NotTakenRecyclerAdapter extends RecyclerView.Adapter<NotTakenRecycl
         }
     }
 
+    // Add a method to filter notTakenList by checked state
+    private void filterItems() {
+        if (notTakenList == null) {
+            Log.d(TAG, "Items list is empty");
+            notTakenList = new ArrayList<>();
+        } else {
+            // Filter items by checked state
+            notTakenList.removeIf(ShoppingItem::isChecked);
+            Log.d(TAG, "Filtered items: " + notTakenList);
+        }
+    }
 }

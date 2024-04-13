@@ -3,11 +3,7 @@
     <string name="item_name">Item Name</string>
     <string name="add">Ekle</string>
     <string name="add_item">Alacak Ekle</string>
-    <string name="alacak_ekle">Alacak Ekle</string>
-    <string name="ornegin">Örn. Elma</string>
-    <string name="sil">Sil</string>
     <string name="taken">Satın Aldıklarım</string>
     <string name="not_taken">Alınacaklar</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_item_hint">Örn. Elma</string>
 </resources>
