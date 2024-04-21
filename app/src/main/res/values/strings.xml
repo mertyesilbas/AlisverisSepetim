@@ -6,4 +6,5 @@
     <string name="taken">Satın Aldıklarım</string>
     <string name="not_taken">Alınacaklar</string>
     <string name="add_item_hint">Örn. Elma</string>
+    <string name="section_name">Section Name</string>
 </resources>

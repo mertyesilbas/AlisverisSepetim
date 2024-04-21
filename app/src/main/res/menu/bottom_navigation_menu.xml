@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO !!! Fix Later -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/not_taken"
         android:title="@string/not_taken"

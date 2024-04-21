@@ -21,44 +21,42 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class NotTakenRecyclerAdapter extends RecyclerView.Adapter<NotTakenRecyclerAdapter.ViewHolder> {
-    private static final String TAG = "NotTakenRecyclerAdapter";
-    private List<ShoppingItem> notTakenList;
+public class TakenChildRecyclerAdapter extends RecyclerView.Adapter<TakenChildRecyclerAdapter.TakenChildViewHolder> {
+
+    private static final String TAG = "TakenChildRecyclerAdapter";
+    private List<ShoppingItem> shoppingItems;
     private final Context context;
-
     private final FirestoreActions firestoreActions = new FirestoreActions();
-
-    public NotTakenRecyclerAdapter(List<ShoppingItem> notTakenList, Context context) {
-this.notTakenList = notTakenList;
+    public TakenChildRecyclerAdapter(List<ShoppingItem> shoppingItems, Context context) {
+        this.shoppingItems = shoppingItems;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public NotTakenRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.shopping_item, parent, false);
-        return new ViewHolder(view);
+    public TakenChildViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View view = layoutInflater.inflate(R.layout.shopping_item, parent, false);
+        return new TakenChildViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(NotTakenRecyclerAdapter.ViewHolder holder, int position) {
-        ShoppingItem shoppingItem = notTakenList.get(position);
+    public void onBindViewHolder(@NonNull TakenChildViewHolder holder, int position) {
+        ShoppingItem shoppingItem = shoppingItems.get(position);
         Log.d(TAG, "Shopping item: " + shoppingItem.getName());
         holder.itemName.setText(shoppingItem.getName());
         holder.checkBox.setChecked(shoppingItem.isChecked()); // Set initial checked state
 
-        // Set the checked state of the item
         holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             shoppingItem.setChecked(isChecked);
             shoppingItem.setUpdatedAt(new Date());
-            // Update the item in Firestore
+            // update the item in Firestore
             firestoreActions.updateItem(shoppingItem);
 
-            Toast.makeText(context, "Alacak olarak işaretlendi.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context , "Alacak olarak işaretlendi.", Toast.LENGTH_SHORT).show();
             removeItem(position);
         });
 
-        // Delete the item
         holder.deleteButton.setOnClickListener(v -> {
             firestoreActions.deleteItem(shoppingItem);
 
@@ -66,23 +64,24 @@ this.notTakenList = notTakenList;
 
             removeItem(position);
         });
+
     }
 
     @Override
     public int getItemCount() {
-        if (notTakenList == null) {
+        if (shoppingItems == null) {
             return 0;
         } else {
-            return notTakenList.size();
+            return shoppingItems.size();
         }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class TakenChildViewHolder extends RecyclerView.ViewHolder {
+
         public CheckBox checkBox;
         public TextView itemName;
         public ImageButton deleteButton;
-
-        public ViewHolder(View itemView) {
+        public TakenChildViewHolder(@NonNull View itemView) {
             super(itemView);
             checkBox = itemView.findViewById(R.id.checkBox);
             itemName = itemView.findViewById(R.id.itemName);
@@ -91,12 +90,14 @@ this.notTakenList = notTakenList;
     }
 
     public void removeItem(int position) {
-        if (notTakenList.size() > position) {
-            notTakenList.remove(position);
+        if (shoppingItems.size() > position) {
+            shoppingItems.remove(position);
             notifyItemRemoved(position); // Notify adapter about the removal
         } else {
-            notTakenList.clear();
+            shoppingItems.clear();
             notifyDataSetChanged();
         }
     }
+
+
 }
